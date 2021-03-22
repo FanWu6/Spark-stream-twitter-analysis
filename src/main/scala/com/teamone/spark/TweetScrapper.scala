@@ -14,7 +14,7 @@ object TweetScrapper {
   def setupTwitter(): Unit = {
     import scala.io.Source
 
-    val lines = Source.fromFile("data/twitter.txt")
+    val lines = Source.fromFile("data/actualdata/twitter.txt")
     for (line <- lines.getLines) {
       val fields = line.split(" ")
       if (fields.length == 2) {
