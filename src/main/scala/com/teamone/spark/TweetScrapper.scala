@@ -1,7 +1,9 @@
 package com.teamone.spark
 
 import org.apache.spark.streaming._
+import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.twitter._
+import twitter4j.Status
 
 object TweetScrapper {
   def setupLogging(): Unit = {
@@ -37,34 +39,53 @@ object TweetScrapper {
     setupLogging()
 
     // Create a DStream from Twitter using our streaming context
-    val tweets = TwitterUtils.createStream(ssc, None)
+    val filter = List("trump")
+    val tweets: ReceiverInputDStream[Status] = TwitterUtils.createStream(ssc, None,filter)
 
-    // Now extract the text of each status update into DStreams using map()
-    val statuses = tweets.map(status => status.getText)
+    val ts = tweets.filter(_.getLang=="en")
+    val statuses = ts.map(statue=>statue.getText)
 
-    // Blow out each word into a new DStream
-    val tweetwords = statuses.flatMap(tweetText => tweetText.split(" "))
+    statuses.print()
+//    val tweets: DStream[Status] = stream.filter { t =>
+//      val tags = t.getText.split(" ").filter(_.startsWith("#")).map(_.toLowerCase)
+//      tags.contains("#bigdata") && tags.contains("#food")
+//    }
 
-    // Now eliminate anything that's not a hashtag
+//    tweets.foreachRDD((rdd,time)=>
+//            rdd.map(t=>{if(t.getLang.equals("en"))
+//              println(t.getText)})
+////            rdd.map(t=>(System.out.println(t.getText)))
+//          )
+
+//    // Now extract the text of each status update into DStreams using map()
+//    val statuses: DStream[String] = tweets.filter(tweet => tweet.getLang.equals("en") || tweet.getLang.equals("")).map(status => status.getText)
+//
+//    tweets.foreachRDD(rdd => {
+//      println("\nNew tweets: ==%s".format(rdd.first().getText))
+//    })
+//    // Blow out each word into a new DStream
+    val tweetwords: DStream[String] = statuses.flatMap(tweetText => tweetText.split(" "))
+//
+//    // Now eliminate anything that's not a hashtag
     val hashtags = tweetwords.filter(word => word.startsWith("#"))
-
-    // Map each hashtag to a key/value pair of (hashtag, 1) so we can count them up by adding up the values
+//
+//    // Map each hashtag to a key/value pair of (hashtag, 1) so we can count them up by adding up the values
     val hashtagKeyValues = hashtags.map(hashtag => (hashtag, 1))
-
-    // Now count them up over a 5 minute window sliding every one second
-    val hashtagCounts = hashtagKeyValues.reduceByKeyAndWindow( (x,y) => x + y, (x,y) => x - y, Seconds(300), Seconds(1))
-    //  You will often see this written in the following shorthand:
-    //val hashtagCounts = hashtagKeyValues.reduceByKeyAndWindow( _ + _, _ -_, Seconds(300), Seconds(1))
-
-    // Sort the results by the count values
-    val sortedResults = hashtagCounts.transform(rdd => rdd.sortBy(x => x._2, ascending = false))
-
-    // Print the top 10
-    sortedResults.print
+//
+//    // Now count them up over a 5 minute window sliding every one second
+    val hashtagCounts: DStream[(String, Int)] = hashtagKeyValues.reduceByKeyAndWindow((x, y) => x + y, (x, y) => x - y, Seconds(300), Seconds(1))
+//    //  You will often see this written in the following shorthand:
+//    //val hashtagCounts = hashtagKeyValues.reduceByKeyAndWindow( _ + _, _ -_, Seconds(300), Seconds(1))
+//
+//    // Sort the results by the count values
+//    val sortedResults: DStream[(String, Int)] = hashtagCounts.transform(rdd => rdd.sortBy(x => x._2, ascending = false))
+//
+//    // Print the top 10
+//    sortedResults.print
 
     // Set a checkpoint directory, and kick it all off
     // I could watch this all day!
-    ssc.checkpoint("C:/checkpoint/")
+//    ssc.checkpoint("C:/checkpoint/")
     ssc.start()
     ssc.awaitTermination()
   }
