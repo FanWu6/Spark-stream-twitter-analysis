@@ -21,4 +21,5 @@ libraryDependencies ++= Seq(
 
   "com.typesafe" % "config" % "1.3.3",
   "org.scalatest" %% "scalatest" % "3.2.2" % "test",
+  "org.apache.spark" %% "spark-mllib" % "2.4.0"
 )

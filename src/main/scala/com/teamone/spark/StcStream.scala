@@ -20,7 +20,7 @@ object StcStream extends App {
     .option("kafka.bootstrap.servers", "localhost:9092")
     .option("subscribe", "TwitterData2") //
     .load()
-//
+
   val selectds = ds.selectExpr("CAST(value AS STRING)")
 
   val customwriter = new ForeachWriter[Row] {
@@ -30,7 +30,7 @@ object StcStream extends App {
     def process(record: Row): Unit = {
       // Write string to connection
 //      MongoDBConnection.insert(record(0).toString())
-       println(record.length)
+       println(record(0).toString)
     }
     def close(errorOrNull: Throwable): Unit = {
       Unit
