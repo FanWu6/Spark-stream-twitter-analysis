@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
   "org.apache.kafka" %% "kafka" % "0.10.2.2",
   "org.twitter4j" % "twitter4j-core" % "4.0.4",
   "org.twitter4j" % "twitter4j-stream" % "4.0.4",
-//  "org.apache.bahir" %% "spark-streaming-twitter" % "2.4.0",
+  "org.apache.bahir" %% "spark-streaming-twitter" % "2.4.0",
 //  "org.apache.kafka" %% "kafka" % "0.10.2.2",
 //  "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.0",
 
