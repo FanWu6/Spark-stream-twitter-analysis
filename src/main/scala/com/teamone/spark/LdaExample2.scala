@@ -22,25 +22,25 @@ object LdaExample2 extends App {
   val lda = new LDA()
     .setOptimizer(new OnlineLDAOptimizer().setMiniBatchFraction(0.8))
     .setOptimizer("em")
-    .setK(1)
-    .setMaxIterations(1)
+    .setK(3)
+    .setMaxIterations(100)
     .setDocConcentration(-1) // use default values
     .setTopicConcentration(-1)// use default values
 //
   val ldaModel: LDAModel = lda.run(lda_countVector)
 //
-//  val topicIndices = ldaModel.describeTopics(maxTermsPerTopic = 5)
-//  val vocabList = processeddata._2.vocabulary
-//  val topics = topicIndices.map { case (terms, termWeights) =>
-//    terms.map(vocabList(_)).zip(termWeights)
-//  }
-////  println(s"$numTopics topics:")
-//  topics.zipWithIndex.foreach { case (topic, i) =>
-//    println(s"TOPIC $i")
-//    topic.foreach { case (term, weight) => println(s"$term\t$weight") }
-//    println(s"==========")
-//  }
+  val topicIndices = ldaModel.describeTopics(maxTermsPerTopic = 10)
+  val vocabList = processeddata._2.vocabulary
+  val topics = topicIndices.map { case (terms, termWeights) =>
+    terms.map(vocabList(_)).zip(termWeights)
+  }
+//  println(s"$numTopics topics:")
+  topics.zipWithIndex.foreach { case (topic, i) =>
+    println(s"TOPIC $i")
+    topic.foreach { case (term, weight) => println(s"$term\t$weight") }
+    println(s"==========")
+  }
 
-  LDApridict.run(sparkSession,ldaModel)
+//  LDApridict.run(sparkSession,ldaModel)
 
 }

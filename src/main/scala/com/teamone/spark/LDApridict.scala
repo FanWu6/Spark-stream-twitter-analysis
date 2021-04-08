@@ -10,9 +10,9 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 object LDApridict extends App {
   def run(sparkSession:SparkSession,ldamodel:LDAModel): Unit ={
 
-    val df: DataFrame = sparkSession.read.format("csv")
+    val df: DataFrame = sparkSession.read.format("json")
       .option("header","true")
-      .load("data/actualdata/Tweets.csv")
+      .load("data/actualdata/smile-annotations-final.json")
 
     val processeddata = Preprocess.run(df,sparkSession)
     val lda_countVector = processeddata._1
@@ -27,6 +27,18 @@ object LDApridict extends App {
     println("-------------")
       println("first topic distribution:"+topicDistributions.first._2.toArray.mkString(", "))
     topicDistributions.take(10).foreach(println)
+
+      val topicIndices = ldamodel.describeTopics(maxTermsPerTopic = 5)
+      val vocabList = processeddata._2.vocabulary
+      val topics = topicIndices.map { case (terms, termWeights) =>
+        terms.map(vocabList(_)).zip(termWeights)
+      }
+    //  println(s"$numTopics topics:")
+      topics.zipWithIndex.foreach { case (topic, i) =>
+        println(s"TOPIC $i")
+        topic.foreach { case (term, weight) => println(s"$term\t$weight") }
+        println(s"==========")
+      }
 
 
   }
