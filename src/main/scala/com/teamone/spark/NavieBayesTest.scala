@@ -9,21 +9,22 @@ import org.apache.spark.mllib.classification.NaiveBayes
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.sql.{Dataset, Row}
+import org.apache.spark.sql.{Dataset, Row, SQLContext, SparkSession}
 
 case class RawDataRecord(category: String, text: String)
 
 object NavieBayesTest extends App {
   case class RawDataRecord(category: String, text: String)
+  val sparkConf = new SparkConf().setAppName("Train Naive Bayes model").setMaster("local[*]")
+  val sc = new SparkContext(sparkConf)
 
+//    val conf = new SparkConf().setMaster("yarn-client")
+//    val sc: SparkContext = new SparkContext(conf)
 
-    val conf = new SparkConf().setMaster("yarn-client")
-    val sc = new SparkContext(conf)
-
-    val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    val sqlContext: SQLContext = new org.apache.spark.sql.SQLContext(sc)
     import sqlContext.implicits._
 
-    var srcRDD = sc.textFile("/tmp/lxw1234/sougou/").map {
+    var srcRDD = sc.textFile("data/sougou/").map {
       x =>
         var data = x.split(",")
         RawDataRecord(data(0),data(1))
@@ -37,8 +38,9 @@ object NavieBayesTest extends App {
     //将词语转换成数组
     var tokenizer = new Tokenizer().setInputCol("text").setOutputCol("words")
     var wordsData = tokenizer.transform(trainingDF)
-    println("output1：")
-    wordsData.select($"category",$"text",$"words").take(1)
+
+    val o1: Array[Row] = wordsData.select($"category",$"text",$"words").take(1)
+  println("output1："+o1(0))
 
     //计算每个词在文档中的词频
     var hashingTF = new HashingTF().setNumFeatures(500000).setInputCol("words").setOutputCol("rawFeatures")
@@ -55,7 +57,7 @@ object NavieBayesTest extends App {
     rescaledData.select($"category", $"features").take(1)
 
     //转换成Bayes的输入格式
-    var trainDataRdd: Dataset[LabeledPoint] = rescaledData.select($"category",$"features").map {
+    var trainDataRdd = rescaledData.select($"category",$"features").map {
       case Row(label: String, features: Vector) =>
         LabeledPoint(label.toDouble, Vectors.dense(features.toArray))
     }
