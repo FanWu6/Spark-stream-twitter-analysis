@@ -30,7 +30,10 @@ object StcStream extends App {
     def process(record: Row): Unit = {
       // Write string to connection
 //      MongoDBConnection.insert(record(0).toString())
-       println(record(0).toString)
+        println(record.schema)
+      println("---------------")
+       println(record.toString())
+      println("------end-------")
     }
     def close(errorOrNull: Throwable): Unit = {
       Unit
