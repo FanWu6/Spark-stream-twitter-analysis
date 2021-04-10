@@ -22,5 +22,6 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.3",
   "org.scalatest" %% "scalatest" % "3.2.2" % "test",
   "org.apache.spark" %% "spark-mllib" % "2.4.0",
-  "edu.stanford.nlp" % "stanford-corenlp" % "3.5.2" artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp"))
+  "edu.stanford.nlp" % "stanford-corenlp" % "3.5.2" artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp")),
+  "com.tsukaby" %% "naive-bayes-classifier-scala" % "0.2.0"
 )
