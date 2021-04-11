@@ -23,23 +23,24 @@ object Train {
 
     //load training data set
     println("Loading training data set ...")
-    val rawTrainingDataSet = sc.textFile("data/actualdata/testing.dataset.csv")
+    val rawTrainingDataSet = sc.textFile("data/actualdata/train.csv")
     val trainingDataSet = rawTrainingDataSet.map(lines => TrainingUtils.toTuple(lines))
                                             .map(x => (x._1, TrainingUtils.filterStopWords(x._2, stopWords)))
                                             .map(x => (x._1, TrainingUtils.featureVectorization(x._2)))
                                             .map(x => new LabeledPoint((x._1).toDouble, x._2))
-//    trainingDataSet.foreach(print)
+//  trainingDataSet.foreach(print)
 
     //loading testing data set
     println("Loading testing data set ...")
-    val rawTestingDataSet = sc.textFile("data/actualdata/testing.dataset.csv")
+    val rawTestingDataSet = sc.textFile("data/actualdata/nbtest.csv")
     val testingDataSet = rawTestingDataSet.map(lines => TrainingUtils.toTuple(lines))
-//                                          .map(x => (x._1, TrainingUtils.filterStopWords(x._2, stopWords)))
-                                          .map(x => (x._1, TrainingUtils.featureVectorization(x._2), x._2))
-                                          .map(x =>{
-                                            val lp = new LabeledPoint((x._1).toDouble, x._2)
-                                            (lp, x._3) //_3 is plain text data
-                                          })
+//      .map(x => (x._1, TrainingUtils.filterStopWords(x._2, stopWords)))
+                                         .map(x => (x._1, TrainingUtils.featureVectorization(x._2), x._2))
+                                         .map(x =>{
+                                           val lp = new LabeledPoint((x._1).toDouble, x._2)
+                                           (lp, x._3) //_3 is plain text data
+                                         })
+
 
     //Begin training model
     println("******** Training *********")
@@ -64,14 +65,16 @@ object Train {
       println("---------------------------------------------------------------")
       println("Text = " + x._3)
       println("Actual Label = " + ( x._1  match {
-        case 0 => "negative"
-        case 2 => "neutral"
-        case 4 => "positive"
+        case 0 => "Late"
+        case 2 => "Bad Fligt"
+        case 4 => "Customer Service Issue"
+        case 6 => "Good"
       }))
       println("Predicted Label = " + (x._2 match {
-        case 0 => "negative"
-        case 2 => "neutral"
-        case 4 => "positive"
+        case 0 => "Late"
+        case 2 => "Bad Fligt"
+        case 4 => "Customer Service Issue"
+        case 6 => "Good"
       }))
       println("----------------------------------------------------------------\n\n")
     } )
