@@ -1,6 +1,6 @@
 package com.teamone.process
 
-import com.tsukaby.bayes.classifier.BayesClassifier
+import com.teamone.classifier.BayesClassifier
 
 
 object nbTest extends App{
@@ -23,9 +23,10 @@ object nbTest extends App{
   bayes.learn("speed", sp2)
   bayes.learn("speed", sp3)
 
+
   val unknow1 = "It is just uncomfortable".split("\\s")
-  val unknow2 = "The seat files slowly".split("\\s")
+  val unknow2 = "12312321321".split("\\s")
 
   println(bayes.classify(unknow1).map(_.category).getOrElse(""))
-  println(bayes.classify(unknow1).map(_.category).getOrElse(""))
+  println(bayes.classify(unknow2).map(_.category).getOrElse(""))
 }
