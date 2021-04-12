@@ -2,8 +2,10 @@ package com.teamone.spark
 
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.classification.{NaiveBayes}
+import org.apache.spark.mllib.classification.NaiveBayes
 import java.io.InputStream
+
+import org.apache.spark.rdd.RDD
 
 
 /**
@@ -23,7 +25,7 @@ object Train {
 
     //load training data set
     println("Loading training data set ...")
-    val rawTrainingDataSet = sc.textFile("data/actualdata/train.csv")
+    val rawTrainingDataSet: RDD[String] = sc.textFile("data/actualdata/train.csv")
     val trainingDataSet = rawTrainingDataSet.map(lines => TrainingUtils.toTuple(lines))
                                             .map(x => (x._1, TrainingUtils.filterStopWords(x._2, stopWords)))
                                             .map(x => (x._1, TrainingUtils.featureVectorization(x._2)))
@@ -32,8 +34,8 @@ object Train {
 
     //loading testing data set
     println("Loading testing data set ...")
-    val rawTestingDataSet = sc.textFile("data/actualdata/nbtest.csv")
-    val testingDataSet = rawTestingDataSet.map(lines => TrainingUtils.toTuple(lines))
+    val rawTestingDataSet: RDD[String] = sc.textFile("data/actualdata/nbtest.csv")
+    val testingDataSet = rawTestingDataSet.map(lines => TrainingUtils.toTuple(lines)) //(category,text)
 //      .map(x => (x._1, TrainingUtils.filterStopWords(x._2, stopWords)))
                                          .map(x => (x._1, TrainingUtils.featureVectorization(x._2), x._2))
                                          .map(x =>{
@@ -80,7 +82,7 @@ object Train {
     } )
 
     //saving model 先不要保存模型
-    println("************** Saving Model **************")
+//    println("************** Saving Model **************")
     model.save(sc, "src/main/nbmodel/")
 
     sc.stop()

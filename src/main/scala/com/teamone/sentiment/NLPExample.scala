@@ -1,7 +1,7 @@
-package com.teamone.process
-import com.teamone.process.SentimentAnalysis
-import com.teamone.process.CleanTweets
-
+package com.teamone.sentiment
+import com.teamone.sentiment.SentimentAnalysis
+import com.teamone.sentiment.CleanTweets
+import com.teamone.sentiment.Sentiment.Sentiment
 import org.apache.spark.sql._
 
 object NLPExample extends App{
@@ -19,7 +19,8 @@ object NLPExample extends App{
 
   val row = Row("RT @abcd: I am good")
 
-  val out = SentimentAnalysis.twAndSentiment(CleanTweets.clean(row.toString))
+  val out: (String, Sentiment) = SentimentAnalysis.twAndSentiment(CleanTweets.clean(row.toString))
 
-  println(out)
+  val sen: Sentiment = out._2
+  print(sen.toString)
 }

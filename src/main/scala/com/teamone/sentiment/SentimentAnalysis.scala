@@ -1,7 +1,7 @@
-package com.teamone.process
+package com.teamone.sentiment
 
 import java.util.Properties
-import com.teamone.process.Sentiment.Sentiment
+import com.teamone.sentiment.Sentiment.Sentiment
 import edu.stanford.nlp.ling.CoreAnnotations
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations
 import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP}

@@ -1,4 +1,4 @@
-package com.teamone.process
+package com.teamone.sentiment
 
 object Sentiment extends Enumeration {
   type Sentiment = Value
@@ -9,4 +9,8 @@ object Sentiment extends Enumeration {
     case 2 => Sentiment.NEUTRAL
     case x if x == 3 || x == 4 => Sentiment.POSITIVE
   }
+
+//  override def toString(): String = {
+//    if()
+//  }
 }

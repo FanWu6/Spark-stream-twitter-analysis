@@ -1,4 +1,4 @@
-package com.teamone.process
+package com.teamone.sentiment
 
 import org.apache.spark.sql._
 

@@ -1,4 +1,4 @@
-package com.teamone.process
+package com.teamone.sentiment
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.flatspec.AnyFlatSpec
