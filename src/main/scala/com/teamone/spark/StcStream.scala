@@ -1,15 +1,12 @@
 package com.teamone.spark
 
-import java.sql.{Connection, DriverManager, Statement}
 
 import com.teamone.Utils.Configure
-import com.teamone.sentiment.NLPExample.row
 import com.teamone.sentiment.Sentiment.Sentiment
 import com.teamone.sentiment.{CleanTweets, SentimentAnalysis}
 import org.apache.spark.ml.PipelineModel
 import org.apache.spark.sql.functions.typedLit
-import org.apache.spark.sql.streaming.Trigger
-import org.apache.spark.sql.{Column, DataFrame, ForeachWriter, Row, SparkSession}
+import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 
 object StcStream extends App {
 
@@ -46,20 +43,24 @@ object StcStream extends App {
 
   val write1 = selectds.writeStream
     .foreachBatch { (batchDF: DataFrame, batchId: Long) =>
-      batchDF.foreach({row=>
+//      batchDF.persist()
+      val b= batchDF.foreach({row=>
         //get sentiment result
         val out: (String, Sentiment) = SentimentAnalysis.twAndSentiment(CleanTweets.clean(row.toString))
         //2.fit navie bayes training model
         val seq= Seq((out._1,out._2.toString))
-        println(seq.toString())
+//        println(seq.toString())
         val df = seq.toDF("text","airline_sentiment")
 //        df.show()
-        val predictions: DataFrame = model.transform(df)
-        predictions.select($"text",$"airline_sentiment",translationMap1($"prediction") as "topic").show()
-      })
 
+        //could work above ,but can't write to file...
+        val predictions: DataFrame = model.transform(df)
+        val result = predictions.select($"text",$"airline_sentiment")
+          .write.format("csv")
+          .save("data/csv")
+      })
     }
-    .outputMode("update")
+//    .outputMode("update")
     .start()
 
   write1.awaitTermination()

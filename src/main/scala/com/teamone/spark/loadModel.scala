@@ -23,7 +23,7 @@ object loadModel extends App {
     val model = PipelineModel.read.load("data/nbmodel")
 
 
-    val seq = Seq(("@VirginAmerica yes, nearly every time I fly VX this “ear worm” won’t go away","positive"))
+    val seq = Seq(("2@1333331VirginAmerica yes, nearly every time I fly VX this “ear worm” won’t go away","positive"))
     val df = seq.toDF("text","senti")
 //
 //
@@ -31,5 +31,14 @@ object loadModel extends App {
     val translationMap: Column = typedLit(Map(
         6.0 -> "bar"
     ))
-    predictions.select($"text",$"senti",translationMap($"prediction") as "topic").show()
+    val rf = predictions.select($"text",$"senti",translationMap($"prediction") as "topic")
+//    rf.coalesce(1).write
+//        .format("csv")
+//      .option("header","true")
+//      .mode("append")
+//      .save("data/csv")
+//
+//    rf.show()
+
+
 }

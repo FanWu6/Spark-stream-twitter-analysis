@@ -23,6 +23,10 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.2" % "test",
   "org.apache.spark" %% "spark-mllib" % "2.4.0",
   "edu.stanford.nlp" % "stanford-corenlp" % "3.5.2" artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp")),
-  "mysql" % "mysql-connector-java" % "5.1.47"
+  "mysql" % "mysql-connector-java" % "5.1.47",
   //  "com.tsukaby" %% "naive-bayes-classifier-scala" % "0.2.0"
+  "org.apache.logging.log4j" %% "log4j-api-scala" % "11.0",
+  "org.apache.logging.log4j" % "log4j-api" % "2.11.0",
+  "org.apache.logging.log4j" % "log4j-core" % "2.11.0" % Runtime,
+  "org.mongodb.scala" %% "mongo-scala-driver" % "2.4.2"
 )
