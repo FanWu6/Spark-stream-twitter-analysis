@@ -49,15 +49,15 @@ object StcStream extends App {
         val out: (String, Sentiment) = SentimentAnalysis.twAndSentiment(CleanTweets.clean(row.toString))
         //2.fit navie bayes training model
         val seq= Seq((out._1,out._2.toString))
-//        println(seq.toString())
+        println(seq.toString())
         val df = seq.toDF("text","airline_sentiment")
-//        df.show()
-
-        //could work above ,but can't write to file...
-        val predictions: DataFrame = model.transform(df)
-        val result = predictions.select($"text",$"airline_sentiment")
-          .write.format("csv")
-          .save("data/csv")
+        df.show()
+//
+//        //could work above ,but can't write to file...
+//        val predictions: DataFrame = model.transform(df)
+//        val result = predictions.select($"text",$"airline_sentiment")
+//          .write.format("csv")
+//          .save("data/csv")
       })
     }
 //    .outputMode("update")

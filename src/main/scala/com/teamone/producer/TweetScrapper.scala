@@ -81,13 +81,13 @@ object TweetScrapper {
         val df: DataFrame = seq.toDF("text","airline_sentiment")
 //                df.show()
         val predictions: DataFrame = model.transform(df)
-//        predictions.show()
-        predictions.select($"text",$"prediction",$"airline_sentiment")
-        .write.format("csv")
-          .mode("append")
-          .save("data/csv")
-//
-        println("save")
+        predictions.show()
+        val result: DataFrame = predictions.select($"text",$"prediction",$"airline_sentiment")
+//        .write.format("csv")
+//          .mode("append")
+//          .save("data/csv")
+////
+//        println("save")
       })
     })
 

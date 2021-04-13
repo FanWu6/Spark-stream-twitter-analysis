@@ -8,6 +8,6 @@ class ConfigReadSpec extends AnyFlatSpec with should.Matchers{
   it should "work" in {
     val kafkaconfig = ConfigFactory.load().getConfig("kafka")
     val kafkatopic:String = kafkaconfig.getString("TOPIC")
-    kafkatopic shouldBe("TwitterData")
+    kafkatopic shouldBe("TwitterData2")
   }
 }

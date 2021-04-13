@@ -21,19 +21,9 @@ object NavieBayesModel extends App {
 //    //读取本地数据
     val newsgroupsRawData: RDD[String] = sc.textFile("data/actualdata/train.csv")
 
-//
-//    println("The number of documents read in is " + newsgroupsRawData.count() + ".")
-//
-//    newsgroupsRawData.takeSample(false, 1, 10L).foreach(println)
-//
-//
-//    //选取twitter text
-//    val text = newsgroupsRawData.map(lines => TrainingUtils.processText(lines))
-//    text.takeSample(false, 1, 10L).foreach(println)
-//
-//    //选取twitter 主题
-//    val topic = newsgroupsRawData.map (line => (line.split(",").take(1))(0))
-//    topic.distinct().take(4).foreach(println)
+    //文件有几条
+    println("The number of documents read in is " + newsgroupsRawData.count() + ".")
+
 
     case class newsgroupsCaseClass(text: String, topic: String)
 //
@@ -83,7 +73,7 @@ object NavieBayesModel extends App {
 
 //    //Fit the pipeline to the training documents
     val model: PipelineModel = pipeline.fit(training)
-    model.save("data/nbmodel")
+//    model.save("data/nbmodel")
 
 
 //

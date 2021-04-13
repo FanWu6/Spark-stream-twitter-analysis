@@ -29,9 +29,12 @@ object loadModel extends App {
 //
     val predictions: DataFrame = model.transform(df)
     val translationMap: Column = typedLit(Map(
-        6.0 -> "bar"
+        0.0 -> "Late",
+        2.0 -> "Bad Fligt",
+        4.0 -> "Customer Service Issue",
+        6.0 -> "Good"
     ))
-    val rf = predictions.select($"text",$"senti",translationMap($"prediction") as "topic")
+    val rf = predictions.select($"text",$"senti",translationMap($"prediction") as "topic").show()
 //    rf.coalesce(1).write
 //        .format("csv")
 //      .option("header","true")
