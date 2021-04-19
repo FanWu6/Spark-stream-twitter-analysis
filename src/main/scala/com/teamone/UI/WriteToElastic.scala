@@ -43,9 +43,9 @@ object WriteToElastic {
     lines.write
       .format("org.elasticsearch.spark.sql")
       .option("es.port", 9200)
-      .option("es.host", "localhost")
+      .option("es.nodes", "localhost")
       .mode("append")
-      .save("test0419/doc")
+      .save("tweetsairline/doc")
   }
 
 }

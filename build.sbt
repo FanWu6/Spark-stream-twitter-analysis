@@ -29,6 +29,6 @@ libraryDependencies ++= Seq(
   "org.apache.logging.log4j" % "log4j-api" % "2.11.0",
   "org.apache.logging.log4j" % "log4j-core" % "2.11.0" % Runtime,
   "org.mongodb.scala" %% "mongo-scala-driver" % "2.4.2",
-  /*"org.elasticsearch" %% "elasticsearch-spark-20" % "7.12.0",*/
+  "org.elasticsearch" %% "elasticsearch-spark-20" % "7.12.0",
   /*"org.elasticsearch" %% "elasticsearch-spark" % "2.4.0"*/
 )

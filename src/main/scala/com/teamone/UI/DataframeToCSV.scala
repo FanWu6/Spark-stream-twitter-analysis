@@ -27,7 +27,7 @@ object DataframeToCSV {
     import sc.implicits._
 
 
-    val seq1 = Seq(("This is df test1","negative",0.0))
+    val seq1 = Seq(("This is df test2","negative",0.0))
 
 
 

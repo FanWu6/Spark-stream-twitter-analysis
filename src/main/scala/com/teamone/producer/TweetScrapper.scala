@@ -83,11 +83,14 @@ object TweetScrapper {
         val predictions: DataFrame = model.transform(df)
         predictions.show()
         val result: DataFrame = predictions.select($"text",$"prediction",$"airline_sentiment")
-//        .write.format("csv")
-//          .mode("append")
-//          .save("data/csv")
-////
-//        println("save")
+        result.write
+          .format("org.elasticsearch.spark.sql")
+          .option("es.port", 9200)
+          .option("es.nodes", "localhost")
+          .mode("append")
+          .save("tweetsairline/doc")
+//
+        println("save")
       })
     })
 
