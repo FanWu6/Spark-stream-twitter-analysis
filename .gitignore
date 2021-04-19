@@ -1,6 +1,5 @@
 
 .bsp/sbt.json
 .idea/
-data/actualdata/twitter.txt
 project/target/
 target/
