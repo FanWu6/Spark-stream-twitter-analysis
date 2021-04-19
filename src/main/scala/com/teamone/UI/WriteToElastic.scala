@@ -17,7 +17,7 @@ object WriteToElastic {
 
   def main(args: Array[String]): Unit = {
 
-    Logger.getLogger("org").setLevel(Level.ERROR)
+    /*Logger.getLogger("org").setLevel(Level.ERROR)*/
 
     /*val conf = new SparkConf().setAppName("WtE").setMaster("local[*]")
     conf.set("es.index.auto.create", "true")
@@ -45,7 +45,7 @@ object WriteToElastic {
       .option("es.port", 9200)
       .option("es.host", "localhost")
       .mode("append")
-      .save("usedcarspark/doc")
+      .save("test0419/doc")
   }
 
 }
