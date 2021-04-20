@@ -13,11 +13,11 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.{SparkConf, SparkContext}
 
-class NavieBayesModelSpec extends AnyFlatSpec with should.Matchers {
+class LogisticRegressionModelSpec extends AnyFlatSpec with should.Matchers {
 
   behavior of "NavieBayes"
 
-  val sparkConf = new SparkConf().setAppName("Train Naive Bayes model").setMaster("local[1]")
+  val sparkConf = new SparkConf().setAppName("Train model").setMaster("local[1]")
   val sc = new SparkContext(sparkConf)
   println("Spark version = " + sc.version)
   val sqlContext= new org.apache.spark.sql.SQLContext(sc)
