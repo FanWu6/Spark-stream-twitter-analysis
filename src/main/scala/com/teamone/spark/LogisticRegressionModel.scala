@@ -6,10 +6,11 @@ import org.apache.spark.ml.evaluation.BinaryClassificationEvaluator
 import org.apache.spark.ml.feature.{HashingTF, IDF, StopWordsRemover, Tokenizer}
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.functions.typedLit
+import org.apache.spark.sql.{Column, DataFrame}
 import org.apache.spark.{SparkConf, SparkContext}
 
-object NavieBayesModel extends App {
+object LogisticRegressionModel extends App {
     val sparkConf = new SparkConf().setAppName("Train Naive Bayes model").setMaster("local[*]")
     val sc = new SparkContext(sparkConf)
     println("Spark version = " + sc.version)
@@ -18,40 +19,35 @@ object NavieBayesModel extends App {
     import sqlContext.implicits._
 
 
-//    //读取本地数据
+    //load training data
     val newsgroupsRawData: RDD[String] = sc.textFile("data/actualdata/train.csv")
-
-    //文件有几条
+    //counts
     println("The number of documents read in is " + newsgroupsRawData.count() + ".")
 
-
     case class newsgroupsCaseClass(text: String, topic: String)
-//
-    val newsgroups = newsgroupsRawData.map{case (lines) =>
-//        val id = filepath.split("/").takeRight(1)(0)
+
+    //remove all other character but words
+    val newsgroups: DataFrame = newsgroupsRawData.map{case (lines) =>
         val topic = lines.split(",").take(1)(0)
         val text = TrainingUtils.processText(lines)
         newsgroupsCaseClass(text,topic)}.toDF()
     newsgroups.cache()
-//
-//
+
     newsgroups.printSchema()
-    newsgroups.sample(false,0.001,10L).show(10)
-//
+
+    newsgroups.sample(false,0.001,10L).show(10,false)
+
     newsgroups.groupBy("topic").count().show()
-//
-//    newsgroups.filter(newsgroups("topic").like("comp%")).sample(false,0.01,10L).show(5)
-//
-//    //traing
+
+    //transform to another dataframe
     val labelednewsgroups = newsgroups.withColumn("label", newsgroups("topic").cast("double"))
-//
-    labelednewsgroups.sample(false,0.003,10L).show(5)
-//    labelednewsgroups.filter(newsgroups("topic").like("comp%")).sample(false,0.007,10L).show(5)
-//
-//
-//    //Split documents from a list of (id, text, label) tuples¶
+
+    labelednewsgroups.sample(false,0.003,10L).show(5,false)
+
+    //Split documents from a list of (id, text, label) tuples¶
     val Array(training, test) = labelednewsgroups.randomSplit(Array(0.9, 0.1), seed = 12345)
     println("test schema")
+    test.show(1,false)
     test.schema.printTreeString()
 //
     println("Total Document Count = " + labelednewsgroups.count())
@@ -71,26 +67,29 @@ object NavieBayesModel extends App {
 //
     remover.getStopWords.foreach(println)
 
-//    //Fit the pipeline to the training documents
+    //Fit the pipeline to the training documents
     val model: PipelineModel = pipeline.fit(training)
 //    model.save("data/nbmodel")
 
-
-//
+    //predict with test data
     val predictions: DataFrame = model.transform(test)
+    val translationMap: Column = typedLit(Map(
+        0.0 -> "Late issue",
+        2.0 -> "Fligt experience issue",
+        4.0 -> "Customer Service Issue",
+        6.0 -> "Other Type"
+    ))
 
     println("-----1-----")
+//    val rf = predictions.select($"text",translationMap($"prediction") as "topic").sample(false,0.1,10L).show(5,false)
+    predictions.select( "text", "prediction", "topic").sample(false,0.1,10L).show(20)
 //    predictions.select("topic", "probability", "prediction", "label").sample(false,0.1,10L).show(5)
 //    println("-----2-----")
 //    predictions.select( "topic", "probability", "prediction", "label").filter(predictions("topic").like("comp%")).sample(false,0.1,10L).show(5)
-//
-//
-    println("-----3-----")
-//    predictions.sample(false,0.1,10L).show(50)
-    predictions.select( "probability", "prediction", "topic").sample(false,0.05,10L).show(20)
 
-//    val evaluator = new BinaryClassificationEvaluator().setMetricName("areaUnderROC")
-//    println("Area under the ROC curve = " + evaluator.evaluate(predictions))
+    //Optimize
+    val evaluator = new BinaryClassificationEvaluator().setMetricName("areaUnderROC")
+    println("Area under the ROC curve = " + evaluator.evaluate(predictions))
 //
 //    val paramGrid = new ParamGridBuilder().
 //      addGrid(hashingTF.numFeatures, Array(1000, 10000, 100000)).
@@ -110,6 +109,6 @@ object NavieBayesModel extends App {
 //
 //    cvModel.avgMetrics
 //
-////    cvModel.transform(test).select( "topic", "probability", "prediction", "label").sample(false,0.1,0L).show(5)
+//    cvModel.transform(test).select( "topic", "probability", "prediction", "label").sample(false,0.1,0L).show(5)
 //    cvModel.transform(test).select( "topic", "probability", "prediction", "label").sample(false,0.1,0L).show(50)
 }
