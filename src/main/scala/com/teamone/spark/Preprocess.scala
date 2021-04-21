@@ -20,8 +20,6 @@ object Preprocess {
 
       )
 
-    //
-    //  //打印前10个
     print(corpus.count())
     println("-----------------")
     //  corpus.map(println(_)).sortBy(ascending=true).take(10)
@@ -31,9 +29,10 @@ object Preprocess {
     //    .map(println(_))
     val corpus_df: DataFrame = sparkSession.createDataFrame(corpus.zipWithIndex()).toDF("corpus", "id")
 
+    //Tokenizing using the RegexTokenizer
     val tokenizer = new RegexTokenizer()
       .setPattern("[\\W_]+")
-      .setMinTokenLength(4) // Filter away tokens with length < 4
+      .setMinTokenLength(4)
       .setInputCol("corpus")
       .setOutputCol("tokens")
 
@@ -41,10 +40,9 @@ object Preprocess {
 
     tokenized_df.select("tokens").show(10,false)
 
-    //停词
-
-
-    val add_stopwords  = Array("http","jetblue","southwestair","americanair","flight","usairways","thanks","virginamerica","thank","today","flightled","united","please")
+    //Removing the Stop-words using the Stop Words remover
+    val add_stopwords  = Array("http","jetblue","southwestair","americanair","flight",
+      "usairways","thanks", "virginamerica","thank","today","flightled","united","please")
     val stopwords = sparkSession.read.text("data/actualdata/stopwords.txt")
       .collect().map(row => row.getString(0)).union(add_stopwords)
 
@@ -55,6 +53,7 @@ object Preprocess {
 
     val filtered_df: DataFrame = remover.transform(tokenized_df)
 
+    //Converting the Tokens into the CountVector
     val vectorizer: CountVectorizerModel = new CountVectorizer()
       .setInputCol("filtered")
       .setOutputCol("features")
@@ -65,7 +64,8 @@ object Preprocess {
     val countVectors: DataFrame= vectorizer.transform(filtered_df).select("id", "features")
     countVectors.show(5,false)
     import sparkSession.implicits._
-    val lda_countVector: RDD[(Long, linalg.Vector)] = countVectors.rdd.map { case Row(id: Long, countVector: Vector) => (id, Vectors.fromML(countVector)) }
+    val lda_countVector: RDD[(Long, linalg.Vector)] = countVectors.rdd.map {
+      case Row(id: Long, countVector: Vector) => (id, Vectors.fromML(countVector)) }
     (lda_countVector,vectorizer)
   }
 }
