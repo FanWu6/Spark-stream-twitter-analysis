@@ -10,7 +10,4 @@ object Sentiment extends Enumeration {
     case x if x == 3 || x == 4 => Sentiment.POSITIVE
   }
 
-//  override def toString(): String = {
-//    if()
-//  }
 }

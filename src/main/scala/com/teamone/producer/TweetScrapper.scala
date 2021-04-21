@@ -1,6 +1,7 @@
 package com.teamone.producer
 
 import com.teamone.Utils.Configure
+import com.teamone.elastic.ToElastic
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.twitter.TwitterUtils
 //import org.apache.spark.streaming.twitter.TwitterUtils
@@ -81,16 +82,15 @@ object TweetScrapper {
         val df: DataFrame = seq.toDF("text","airline_sentiment")
 //                df.show()
         val predictions: DataFrame = model.transform(df)
-        predictions.show()
+//        predictions.show()
+//        println(predictions.select($"text").to)
+//        println(predictions.select($"prediction").toString())
         val result: DataFrame = predictions.select($"text",$"prediction",$"airline_sentiment")
-        result.write
-          .format("org.elasticsearch.spark.sql")
-          .option("es.port", 9200)
-          .option("es.nodes", "localhost")
-          .mode("append")
-          .save("tweetsairline/doc")
+
+        // Upload to Elastic
+        ToElastic.dataFrameToElastic(result, "tweetsairline/doc")
 //
-        println("save")
+        println("save----------------")
       })
     })
 

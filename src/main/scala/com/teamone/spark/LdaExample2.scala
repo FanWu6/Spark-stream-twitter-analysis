@@ -30,7 +30,7 @@ object LdaExample2 extends App {
   val lda = new LDA()
     .setOptimizer(new OnlineLDAOptimizer().setMiniBatchFraction(0.8))
     .setOptimizer("em")
-    .setK(3)
+    .setK(4)
     .setMaxIterations(100)
     .setDocConcentration(-1) // use default values
     .setTopicConcentration(-1)// use default values
