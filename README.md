@@ -1,4 +1,5 @@
 Spark-stream-twitter-analysis
+![GitHub top language](https://img.shields.io/github/languages/top/FanWu6/Spark-stream-twitter-analysis.svg)
 ==============
 Final project of CSYE-7200
 
