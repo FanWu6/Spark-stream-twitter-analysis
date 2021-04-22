@@ -89,7 +89,7 @@ object LogisticRegressionModel extends App {
 
     //Optimize
     val evaluator = new BinaryClassificationEvaluator().setMetricName("areaUnderROC")
-    println("Area under the ROC curve = " + evaluator.evaluate(predictions))
+    println("Area under the ROC curve = " + (evaluator.evaluate(predictions)))
 //
 //    val paramGrid = new ParamGridBuilder().
 //      addGrid(hashingTF.numFeatures, Array(1000, 10000, 100000)).

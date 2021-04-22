@@ -68,7 +68,7 @@ object TweetScrapper {
 
     import spark.implicits._
     val model = PipelineModel.read.load("data/nbmodel")
-    println("载入model")
+    println("loading model")
 
     case class tweetsgroupsCaseClass(text: String, topic: String)
 
@@ -78,10 +78,10 @@ object TweetScrapper {
 
 //        println(i)
         val out: (String, Sentiment) = SentimentAnalysis.twAndSentiment(CleanTweets.clean(row.toString))
-        //2.fit navie bayes training model
+        //2.fit logistic regression training model
 
         val tweet = out._1;
-        val parts = tweet split(",") //space = dot operator (.) in Scala
+        val parts = tweet split(",") //space = dot operator (,) in Scala
         val texts = parts mkString(" ") //text data may contain comma, so get slice of string till end
         val text = TweetUtils.filterOnlyWords(texts)
 
