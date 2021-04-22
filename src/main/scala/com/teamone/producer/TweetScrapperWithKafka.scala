@@ -31,51 +31,6 @@ object TweetScrapperWithKafka {
   }
 
 
-//  def main(args: Array[String]) {
-//
-//    // Configure Twitter credentials using twitter.txt
-//    setupTwitter()
-//
-//    // all CPU cores and one-second batches of data
-//    val ssc = new StreamingContext("local[*]", "T1234", Seconds(1))
-//
-//    // Get rid of log spam (should be called after the context is set up)
-//    setupLogging()
-//
-//    // Create a DStream from Twitter using our streaming context
-//    val filter = Configure.tweetfiltersc.getString("KEYWORDS").split(",")
-//    val tweets: ReceiverInputDStream[Status] = TwitterUtils.createStream(ssc, None,filter)
-//
-//    val ts = tweets.filter(_.getLang==Configure.tweetfiltersc.getString("LANGUAGES"))
-//    val statuses = ts.map(statue=>statue.getText)
-//
-//
-//    statuses.foreachRDD { (rdd, time) =>
-//
-//      rdd.foreachPartition { partitionIter =>
-//        //Creamos nuestro Producer y le enviamos los valores que usará para conectarse a nuestros Cluster GCP
-//        val props = new Properties()
-//        val bootstrap = "localhost:9092" //Conexión del cluster Kafka -- ip publica y el puerto, example: 10.0.0.1:9092
-//        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-//        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-//        props.put("bootstrap.servers", bootstrap)
-//        val producer = new KafkaProducer[String, String](props)
-//        partitionIter.foreach { elem =>
-//          val dat = elem.toString()
-//          val data = new ProducerRecord[String, String]("llamada", null, dat)
-//          producer.send(data)
-//        }
-//        producer.flush()
-//        producer.close()
-//      }
-//    }
-//
-//    statuses.print()
-//
-//    ssc.start()
-//    ssc.awaitTermination()
-//  }
-
   def main(args: Array[String]) ={
     // set log level
     setupLogging()
