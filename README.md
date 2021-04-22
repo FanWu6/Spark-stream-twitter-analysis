@@ -1,7 +1,7 @@
 Spark-stream-twitter-analysis
 ==============
 Final project of CSYE-7200
-![GitHub top language](https://img.shields.io/github/languages/top/FanWu6/Spark-stream-twitter-analysis.svg)
+
 Use cases
 --------------------
 User inputs the name of an airplane company and receives a comprehensive analysis on public opinion.
