@@ -26,7 +26,7 @@ class LdaExample2Spec extends AnyFlatSpec with should.Matchers {
     .setOptimizer(new OnlineLDAOptimizer().setMiniBatchFraction(0.8))
     .setOptimizer("em")
     .setK(3)
-    .setMaxIterations(100)
+    .setMaxIterations(20)
     .setDocConcentration(-1) // use default values
     .setTopicConcentration(-1)// use default values
 

@@ -35,18 +35,5 @@ class TrainingUtilsSpec extends AnyFlatSpec with should.Matchers {
     xs shouldEqual xx
   }
 
-  behavior of "filterStopWords"
 
-  "filterStopWords" should "work" in{
-    val sparkConf = new SparkConf().setAppName("Train Naive Bayes model").setMaster("local[*]")
-    val sc = new SparkContext(sparkConf)
-
-    //load stop words 此处读的是resources下的目录
-    val stream: InputStream = getClass.getResourceAsStream("/stopwords.txt")
-    val lines = scala.io.Source.fromInputStream(stream).getLines.toSet
-    val stopWords = sc.broadcast(lines).value
-
-    val xs = TrainingUtils.filterStopWords("Bad ,,,flight, Delay for 5 hours. ,,,Really bad experience.",stopWords)
-    xs shouldBe "bad flight delay 5 hours really bad experience"
-  }
 }
