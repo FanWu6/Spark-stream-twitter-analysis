@@ -2,6 +2,7 @@ package com.teamone.producer
 
 import com.teamone.Utils.Configure
 import com.teamone.elastic.ToElastic
+import com.teamone.spark.{TrainingUtils, TweetUtils}
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.twitter.TwitterUtils
 //import org.apache.spark.streaming.twitter.TwitterUtils
@@ -69,6 +70,7 @@ object TweetScrapper {
     val model = PipelineModel.read.load("data/nbmodel")
     println("载入model")
 
+    case class tweetsgroupsCaseClass(text: String, topic: String)
 
     statuses.foreachRDD( rdd => {
 
@@ -77,16 +79,22 @@ object TweetScrapper {
 //        println(i)
         val out: (String, Sentiment) = SentimentAnalysis.twAndSentiment(CleanTweets.clean(row.toString))
         //2.fit navie bayes training model
-        val seq= Seq((out._1,out._2.toString))
-        //        println(seq.toString())
+
+        val tweet = out._1;
+        val parts = tweet split(",") //space = dot operator (.) in Scala
+        val texts = parts mkString(" ") //text data may contain comma, so get slice of string till end
+        val text = TweetUtils.filterOnlyWords(texts)
+
+        val seq= Seq((text,out._2.toString))
+
         val df: DataFrame = seq.toDF("text","airline_sentiment")
 //                df.show()
         val predictions: DataFrame = model.transform(df)
 //        predictions.show()
 //        println(predictions.select($"text").to)
 //        println(predictions.select($"prediction").toString())
-        val result: DataFrame = predictions.select($"text",$"prediction",$"airline_sentiment")
-
+        val result = predictions.select($"text",$"prediction",$"airline_sentiment")
+        result.show(false)
         // Upload to Elastic
         ToElastic.dataFrameToElastic(result, "tweetsairline/doc")
 //
@@ -94,28 +102,6 @@ object TweetScrapper {
       })
     })
 
-    // Blow out each word into a new DStream
-//    val tweetwords = statuses.flatMap(tweetText => tweetText.split(" "))
-//
-//    // Now eliminate anything that's not a hashtag
-//    val hashtags = tweetwords.filter(word => word.startsWith("#"))
-//
-//    // Map each hashtag to a key/value pair of (hashtag, 1) so we can count them up by adding up the values
-//    val hashtagKeyValues = hashtags.map(hashtag => (hashtag, 1))
-//
-//    // Now count them up over a 5 minute window sliding every one second
-//    val hashtagCounts = hashtagKeyValues.reduceByKeyAndWindow( (x,y) => x + y, (x,y) => x - y, Seconds(300), Seconds(1))
-//    //  You will often see this written in the following shorthand:
-//    //val hashtagCounts = hashtagKeyValues.reduceByKeyAndWindow( _ + _, _ -_, Seconds(300), Seconds(1))
-//
-//    // Sort the results by the count values
-//    val sortedResults = hashtagCounts.transform(rdd => rdd.sortBy(x => x._2, ascending = false))
-//
-//    // Print the top 10
-//    sortedResults.print
-
-    // Set a checkpoint directory, and kick it all off
-    // I could watch this all day!
     ssc.checkpoint("C:/checkpoint/")
     ssc.start()
     ssc.awaitTermination()
